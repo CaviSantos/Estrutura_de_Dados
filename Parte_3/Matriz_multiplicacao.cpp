@@ -49,8 +49,27 @@ bool verifica_Dimensao(const Matriz &M1, const Matriz &M2) {
 }
 
 // Função para multiplicar as duas matrizes.
-Matriz multiplicacao(){
+Matriz multiplicacao(const Matriz &M1, const Matriz &M2) {
+    if (M1.get_colunas() != M2.get_linhas()) {
+        cout << "Dimensões incompatíveis para multiplicação." << endl;
+        return Matriz(0, 0);  // Retorna uma matriz nula
+    }
+
+    int linhas = M1.get_linhas();
+    int colunas = M2.get_colunas();
+    int inner = M1.get_colunas();  // Número de colunas de M1 ou número de linhas de M2
     
+    Matriz resultado(linhas, colunas);
+    
+    for (int l = 0; l < linhas; l++) {
+        for (int c = 0; c < colunas; c++) {
+            resultado(l, c) = 0;
+            for (int k = 0; k < inner; k++) {
+                resultado(l, c) += M1(l, k) * M2(k, c);
+            }
+        }
+    }
+    return resultado;
 }
 
 int main() {
@@ -88,7 +107,9 @@ int main() {
         }
     }
     
+    multiplicacao(M1,M2);
     
+    //falta printar o resultado.
 
     return 0;
 }
