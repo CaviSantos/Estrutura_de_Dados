@@ -1,104 +1,118 @@
-#include <exception>
 #include <iostream>
 using namespace std;
 
-
-class Matriz{
-    int num_linhas;
-    int num_colunas;
+// Classe Matriz
+class Matriz {
+    int linhas;
+    int colunas;
     double **M;
     
-    public:
+public:
     
-    //construtor
-    Matriz(int linhas, int colunas){
-        num_colunas = colunas;
-        num_linhas = linhas;
-        
+    // Construtor
+    Matriz(int linhas, int colunas) : linhas(linhas), colunas(colunas) {
         M = new double* [linhas];
-        
-        for(int l = 0; l < linhas; l++){
-            M[l] = new double [colunas];
+        for (int l = 0; l < linhas; l++) {
+            M[l] = new double[colunas];
         }
     }
     
-    ~Matriz(){
-        for(int l =0; l<num_linhas; l++){
+    // Destrutor
+    ~Matriz() {
+        for (int l = 0; l < linhas; l++) {
             delete[] M[l];
         }
         delete[] M;
     }
     
+    // Sobrecarga do operador () para acessar elementos
     double& operator() (int i, int j) {
         return M[i][j];
     }
     
-    int getColuna(){
-        return num_colunas;
-    }
-    int getLinha(){
-        return num_linhas;        
+    int get_linhas() const {
+        return linhas;
     }
     
-    
+    int get_colunas() const {
+        return colunas;
+    }
 };
 
-Matriz soma(Matriz &cleiton, Matriz &rasta){
-    
-    Matriz cabecadegelo(cleiton.getLinha(),cleiton.getColuna());
-    
-    for(int a = 0; a < cleiton.getLinha(); a++){
-        for(int b = 0; a < cleiton.getColuna(); b++){
-            cabecadegelo(a,b) = cleiton(a,b) + rasta(a,b);
-        }
-    }
-    return cabecadegelo;
+// Verifica se duas matrizes têm as mesmas dimensões
+bool verifica_Dimensao(const Matriz &M1, const Matriz &M2) {
+    return (M1.get_linhas() == M2.get_linhas() && M1.get_colunas() == M2.get_colunas());
 }
 
-int main(){
-    /*
-    int i,j;
+// Função para somar duas matrizes
+Matriz soma(const Matriz &M1, const Matriz &M2) {
+    if (!verifica_Dimensao(M1, M2)) {
+        cout << "Dimensões diferentes, retornando matriz nula." << endl;
+        return Matriz(0, 0);  // Retorna uma matriz nula
+    }
+
+    int linhas = M1.get_linhas();
+    int colunas = M1.get_colunas();
+    Matriz somar(linhas, colunas);
+
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            somar(i, j) = M1(i, j) + M2(i, j);
+        }
+    }
+    return somar;
+}
+
+int main() {
+    int l, c;
     
+    // Entrada para a Matriz 1
+    cout << "Matriz 1\n";
+    cout << "Insira a quantidade de linhas da matriz 1: ";
+    cin >> l;
+    cout << "Insira a quantidade de colunas da matriz 1: ";
+    cin >> c;
     
-   cout << "matriz 1";
-   cout << "numero de linhas: "; cin >> i; 
-   cout <<"\n";
-   cout << "numero de colunas : "; cin >> j;
-   cout <<"\n";
-   
-   Matriz cleiton(i,j);
-   
-   for(int k = 0; k < i;k++){
-       for(int g = 0; g<j; g++){
-           cin >> cleiton(k,g);
-       }
-   }
-   
-   cout << "matriz 2";
-   Matriz rasta(i,j);
-   
-   for(int k = 0; k < i;k++){
-       for(int g = 0; g<j; g++){
-           cin >> rasta(k,g);
-       }
-   }
-   */
-   Matriz cleiton(2,2);
-   cleiton(0,0) = 1; cleiton(0,1) = 2;
-   cleiton(1,0) = 3; cleiton(1,1) = 4;
-   Matriz rasta(2,2);
-   rasta(0,0) = 4; rasta(0,1) = 3;
-   rasta(1,0) = 2; rasta(1,1) = 1;
-   
+    Matriz M1(l, c);
+    cout << "Insira os elementos da matriz 1:\n";
+    for (int i = 0; i < l; i++) {
+        for (int j = 0; j < c; j++) {
+            cin >> M1(i, j);
+        }
+    }
     
-    Matriz pedra = soma(cleiton,rasta);
+    int a, b;
     
-    for(int k = 0; k < 2;k++){
-       for(int g = 0; g<2; g++){
-           cout << pedra(k,g) <<" ";
-       }
-       cout << "\n";
-   } 
+    // Entrada para a Matriz 2
+    cout << "\nMatriz 2\n";
+    cout << "Insira a quantidade de linhas da matriz 2: ";
+    cin >> a;
+    cout << "Insira a quantidade de colunas da matriz 2: ";
+    cin >> b;
+    
+    Matriz M2(a, b);
+    cout << "Insira os elementos da matriz 2:\n";
+    for (int i = 0; i < a; i++) {
+        for (int j = 0; j < b; j++) {
+            cin >> M2(i, j);
+        }
+    }
+    
+    // Verifica se as dimensões são compatíveis para soma
+    if (verifica_Dimensao(M1, M2)) {
+        Matriz Resultado = soma(M1, M2);
+
+        // Imprime a matriz resultante
+        cout << "\nResultado da soma das matrizes:\n";
+        for (int i = 0; i < l; i++) {
+            for (int j = 0; j < c; j++) {
+                cout << Resultado(i, j) << " ";
+            }
+            cout << "\n";
+        }
+    } else {
+        cout << "Não foi possível somar as matrizes, pois têm dimensões diferentes." << endl;
+    }
 
     return 0;
 }
